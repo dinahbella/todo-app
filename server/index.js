@@ -2,7 +2,6 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import combineTypeDefs from "./typeDefs/index.js"; // Ensure this file is correctly exporting typeDefs
 import { combineResolvers } from "./resolvers/index.js";
-import { connectDB } from "./db/connectDB.js";
 
 const resolvers = {
   Query: {

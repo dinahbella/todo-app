@@ -22,35 +22,48 @@ const todoResolver = {
         throw new Error(error.message || "Error getting todo");
       }
     },
-    priority: async (parent, args, context) => {
+  },
+  Mutation: {
+    addTodo: async (parent, { input }, context) => {
       try {
-        return await Todo.findOne().sort({ priority: -1 }); // Sorting by priority
+        if (!context.getUser()) throw new Error("Unauthorized");
+        const newTodo = new Todo({
+          ...input,
+          userId: await context.getUser()._id,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        return await newTodo.save();
       } catch (error) {
-        throw new Error("Error fetching priority todo.");
+        console.error("Error in addTodo:", error);
+        throw new Error("Error adding todo.");
       }
     },
-    date: async (parent, args, context) => {
+    updateTodo: async (parent, { todoId, input }, context) => {
       try {
-        const latestTodo = await Todo.findOne().sort({ createdAt: -1 });
-        return latestTodo ? latestTodo.date : null;
+        if (!context.getUser()) throw new Error("Unauthorized");
+        const updatedTodo = await Todo.findByIdAndUpdate(
+          todoId,
+          {
+            ...input,
+            updatedAt: new Date().toISOString(),
+          },
+          { new: true }
+        );
+        return updatedTodo;
       } catch (error) {
-        throw new Error("Error fetching date.");
+        console.error("Error in updateTodo:", error);
+        throw new Error("Error updating todo.");
       }
     },
-    dueDate: async (parent, args, context) => {
+    deleteTodo: async (parent, { todoId }, context) => {
       try {
-        const earliestDue = await Todo.findOne().sort({ dueDate: 1 });
-        return earliestDue ? earliestDue.dueDate : null;
+        if (!context.getUser()) throw new Error("Unauthorized");
+        const deletedTodo = await Todo.findByIdAndDelete(todoId);
+        return deletedTodo;
       } catch (error) {
-        throw new Error("Error fetching due date.");
-      }
-    },
-    completed: async (parent, args, context) => {
-      try {
-        const completedTodo = await Todo.findOne({ completed: true });
-        return !!completedTodo; // Returns true if there's a completed todo
-      } catch (error) {
-        throw new Error("Error fetching completed status.");
+        console.error("Error in deleteTodo:", error);
+        throw new Error("Error deleting todo.");
       }
     },
   },

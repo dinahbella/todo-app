@@ -2,6 +2,7 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import combineTypeDefs from "./typeDefs/index.js"; // Ensure this file is correctly exporting typeDefs
 import { combineResolvers } from "./resolvers/index.js";
+import { connectDB } from "./db/connectDB.js";
 
 const resolvers = {
   Query: {
@@ -14,7 +15,6 @@ async function startServer() {
     typeDefs: combineTypeDefs, // Ensure combineTypeDefs is properly formatted
     resolvers: combineResolvers,
   });
-
   const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 }, // Set port explicitly (optional)
   });

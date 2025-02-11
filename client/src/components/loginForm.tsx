@@ -1,39 +1,37 @@
-"use server";
+import { auth, signIn } from "@/auth";
+import SubmitButton from "./SubmitButton";
+import { Facebook, Google } from "./socialIcons";
 
-import { signIn } from "@/auth";
-import React from "react";
-import { Button } from "./ui/button";
-import { Google } from "@/app/login/page";
-import { Facebook } from "@/app/login/page";
-
-async function handleGoogleSignIn() {
-  await signIn("google", {
-    callbackUrl: "http://localhost:3000/onboarding",
-    redirectTo: "/onboarding",
-  });
-}
-
-async function handleFacebookSignIn() {
-  await signIn("facebook", {
-    callbackUrl: "http://localhost:3000/onboarding",
-    redirectTo: "/onboarding",
-  });
-}
-
-const LoginForm = () => {
+const LoginForm = async () => {
   return (
-    <div>
-      <form action={handleGoogleSignIn}>
-        <Button variant="outline" className="w-full" type="submit">
-          <Google />
-          Google
-        </Button>
+    <div className="flex flex-col gap-4">
+      <form
+        action={async () => {
+          await signIn("github", {
+            redirectTo: "/onboarding",
+          });
+        }}
+      >
+        <SubmitButton
+          text="Login with Github"
+          variant="outline"
+          width="w-full"
+          icon={<Facebook />}
+        />
       </form>
-      <form action={handleFacebookSignIn}>
-        <Button variant="outline" className="w-full" type="submit">
-          <Facebook />
-          Facebook
-        </Button>
+      <form
+        action={async () => {
+          await signIn("google", {
+            redirectTo: "/onboarding",
+          });
+        }}
+      >
+        <SubmitButton
+          text="Login with Google"
+          variant="outline"
+          width="w-full"
+          icon={<Google />}
+        />
       </form>
     </div>
   );

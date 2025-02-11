@@ -1,0 +1,11 @@
+import z from "zod";
+export const loginSchema = z.object({
+  usename: z.string().min(3, "Name must be at least"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const signupSchema = z.object({
+  username: z.string().min(3, "Name must be at least"),
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});

@@ -27,6 +27,9 @@ import {
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
+import { SideMenu } from "./SideMenu";
+import Footer from "./Footer";
 
 export function AppSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,20 +60,6 @@ export function AppSidebar() {
     { name: "Gray", color: "bg-gray-500" },
   ];
 
-  const tagColors = [
-    { name: "Red", color: "bg-red-500" },
-    { name: "Blue", color: "bg-blue-500" },
-    { name: "Green", color: "bg-green-500" },
-    { name: "Yellow", color: "bg-yellow-500" },
-    { name: "Purple", color: "bg-purple-500" },
-    { name: "Pink", color: "bg-pink-500" },
-    { name: "Orange", color: "bg-orange-500" },
-    { name: "Teal", color: "bg-teal-500" },
-    { name: "Cyan", color: "bg-cyan-300" },
-    { name: "Rose", color: "bg-rose-500" },
-    { name: "Indigo", color: "bg-indigo-500" },
-    { name: "Gray", color: "bg-gray-500" },
-  ];
   // Add new list
   const handleAddList = () => {
     if (listName.trim()) {
@@ -80,17 +69,6 @@ export function AppSidebar() {
       setIsAddingList(false);
     }
   };
-  const handleAddTag = () => {
-    if (newTag.trim()) {
-      const randomColor =
-        tagColors[Math.floor(Math.random() * tagColors.length)];
-      setTags([...tags, { name: newTag, color: randomColor }]);
-      setNewTag("");
-      setIsAddingTag(false);
-    }
-  };
-
-  // Controls the input field visibility
 
   // Open delete confirmation popup
   const confirmDeleteList = (listName: string) => {
@@ -106,7 +84,7 @@ export function AppSidebar() {
       setListToDelete(null);
     }
   };
-
+  const router = useRouter();
   return (
     <SidebarProvider>
       {/* Menu button (always visible) */}
@@ -154,57 +132,29 @@ export function AppSidebar() {
                 </div>
                 <p className="font-mediun text-xl p-4 mt-2">Tasks</p>
 
-                <SidebarMenu>
-                  <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
-                    <FastForward />
-                    <p className="hover:font-medium">Upcoming</p>
-                    <SidebarMenuBadge className="bg-gray-200 rounded hover:bg-white">
-                      12
-                    </SidebarMenuBadge>
+                <SideMenu />
+                {/* Lists Section */}
+                <p className="font-medium text-xl p-4 mt-2">Lists</p>
+                {lists.map((list, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 m-1 w-full rounded-md hover:bg-gray-200"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span
+                        className={`px-2 py-2 rounded ${list.color}`}
+                      ></span>
+                      <p className="hover:font-medium">{list.name}</p>
+                      <SidebarMenuBadge className="bg-gray-200 rounded hover:bg-white">
+                        {list.count}
+                      </SidebarMenuBadge>
+                    </div>
+                    <Trash2
+                      className="text-red-500 cursor-pointer hover:text-red-700"
+                      onClick={() => confirmDeleteList(list.name)}
+                    />
                   </div>
-                  <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
-                    <ListCheck />
-                    <p className="hover:font-medium">Today</p>
-                    <SidebarMenuBadge className="bg-gray-200 rounded hover:bg-white">
-                      5
-                    </SidebarMenuBadge>
-                  </div>
-                  <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
-                    <Calendar />
-                    <p className="hover:font-medium">Calender</p>
-                  </div>
-                  <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
-                    <File />
-                    <p className="hover:font-medium">Sticky wall</p>
-                  </div>
-                </SidebarMenu>
-                <div className="p-4">
-                  <p className="font-medium text-xl mb-2">Lists</p>
-                  <ul className="space-y-2">
-                    {" "}
-                    {/* Ensures lists are displayed properly */}
-                    {lists.map((list, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center justify-between p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span
-                            className={`w-4 h-4 rounded ${list.color}`}
-                          ></span>
-                          <p className="hover:font-medium">{list.name}</p>
-                          <SidebarMenuBadge className="bg-gray-300 rounded px-2 py-1">
-                            {list.count}
-                          </SidebarMenuBadge>
-                        </div>
-                        <Trash2
-                          className="text-red-500 cursor-pointer hover:text-red-700"
-                          onClick={() => confirmDeleteList(list.name)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                ))}
 
                 {/* Add New List Button */}
                 <div
@@ -257,54 +207,9 @@ export function AppSidebar() {
                     </div>
                   </div>
                 )}
-
-                <p className="font-medium text-xl p-4 mt-2">Lists</p>
-                <div className="flex gap-2 flex-wrap">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className={`px-2 py-1 rounded ${tag.color}`}
-                    >
-                      {tag.name}
-                    </span>
-                  ))}
-
-                  {/* Button to show input field */}
-                  {!isAddingTag ? (
-                    <Button
-                      className="bg-gray-200 flex items-center"
-                      onClick={() => setIsAddingTag(true)}
-                    >
-                      <Plus className="text-gray-500 w-5 h-5" />
-                      Add Tag
-                    </Button>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Input
-                        type="text"
-                        placeholder="New Tag"
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        className="border rounded px-2 py-1"
-                      />
-                      <Button onClick={handleAddTag}>Add</Button>
-                    </div>
-                  )}
-                </div>
               </SidebarGroupContent>
             </SidebarGroup>
-
-            {/* Sidebar Footer */}
-            <SidebarFooter>
-              <div className="flex items-center space-x-2 p-2 m-1 w-full mt-8 rounded-md hover:bg-gray-200">
-                <Settings />
-                <h5 className="hover:font-medium">Settings</h5>
-              </div>
-              <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
-                <LogOut />
-                <p className="hover:font-medium">Log Out</p>
-              </div>
-            </SidebarFooter>
+            <Footer />
           </SidebarContent>
         </Sidebar>
       </div>

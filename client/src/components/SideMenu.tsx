@@ -1,13 +1,20 @@
 import { FastForward, ListCheck, Calendar, File } from "lucide-react";
-import router from "next/router";
 import React from "react";
 import { SidebarMenu, SidebarMenuBadge } from "./ui/sidebar";
+import { useRouter } from "next/navigation";
 
 export const SideMenu = () => {
+  const router = useRouter();
+
   return (
     <div>
       <SidebarMenu>
-        <div className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200">
+        <div
+          className="flex items-center space-x-2 p-2 m-1 w-full rounded-md hover:bg-gray-200"
+          onClick={() => {
+            router.push("/upcoming");
+          }}
+        >
           <FastForward />
           <p className="hover:font-medium">Upcoming</p>
           <SidebarMenuBadge className="bg-gray-200 rounded hover:bg-white">

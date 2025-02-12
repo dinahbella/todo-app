@@ -14,29 +14,27 @@ import Link from "next/link";
 
 const TaskItem = ({
   task,
-  message,
+  description,
   date,
   priority,
 }: {
   task: string;
-  message: string;
+  description: string;
   date: string;
   priority: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Priority color mapping
   const priorityColorMap: { [key: string]: string } = {
-    Work: "bg-cyan-500", // Blue for Work priority
-    Personal: "bg-rose-500", // Green for Personal priority
-    List: "bg-yellow-500", // Yellow for List priority
+    Work: "bg-cyan-500",
+    Personal: "bg-rose-500",
+    List: "bg-yellow-500",
   };
 
-  // Dropdown box color mapping
   const boxColorMap: { [key: string]: string } = {
-    Work: "bg-blue-100 border-blue-500", // Light blue for Work
-    Personal: "bg-pink-100 border-pink-500", // Light pink for Personal
-    List: "bg-yellow-100 border-yellow-500", // Light yellow for List
+    Work: "bg-blue-100 border-blue-500",
+    Personal: "bg-pink-100 border-pink-500",
+    List: "bg-yellow-100 border-yellow-500",
   };
 
   return (
@@ -73,7 +71,7 @@ const TaskItem = ({
         >
           <div className="flex items-center gap-2">
             <CheckCircle className="text-green-500 w-5 h-5" />
-            <span className="text-sm font-semibold">{message}</span>
+            <span className="text-sm font-semibold">{description}</span>
           </div>
           <div className="flex items-center gap-2 mt-2 text-gray-500 text-xs">
             <Calendar className="w-4 h-4" />
@@ -87,38 +85,36 @@ const TaskItem = ({
 };
 
 const Menu = () => {
-  const tasks = [
+  const [tasks, setTasks] = useState([
     {
       task: "Research content ideas",
-      message: "Great start! Gather insights.",
+      description: "Great start! Gather insights.",
       date: "Feb 12, 2025",
       priority: "Work",
     },
     {
       task: "Create a database of guest authors",
-      message: "Keep networking!",
+      description: "Keep networking!",
       date: "Feb 15, 2025",
       priority: "Personal",
     },
     {
       task: "Write an outline for the article",
-      message: "Outline is key!",
+      description: "Outline is key!",
       date: "Feb 18, 2025",
       priority: "List",
     },
-    {
-      task: "Plan a social media post",
-      message: "Engagement matters!",
-      date: "Feb 20, 2025",
-      priority: "Work",
-    },
-    {
-      task: "Schedule an editorial meeting",
-      message: "Teamwork wins!",
-      date: "Feb 22, 2025",
-      priority: "Personal",
-    },
-  ];
+  ]);
+
+  // Function to add a new task
+  const addNewTask = (taskData: {
+    task: string;
+    description: string;
+    date: string;
+    priority: string;
+  }) => {
+    setTasks((prevTasks) => [...prevTasks, taskData]);
+  };
 
   return (
     <div className="flex h-screen">
@@ -130,9 +126,9 @@ const Menu = () => {
             {tasks.length}
           </Badge>
         </h1>
+
         <Link href="/newTask">
-          {" "}
-          <div className="border w-screen flex gap-4 rounded-md mt-10 p-3">
+          <div className="border w-screen flex gap-4 rounded-md mt-10 p-3 cursor-pointer">
             <Plus className="text-muted-foreground w-5 h-5" />
             <h4>Add new task</h4>
           </div>
@@ -140,13 +136,7 @@ const Menu = () => {
 
         {/* Task List */}
         {tasks.map((taskData, index) => (
-          <TaskItem
-            key={index}
-            task={taskData.task}
-            message={taskData.message}
-            date={taskData.date}
-            priority={taskData.priority}
-          />
+          <TaskItem key={index} {...taskData} />
         ))}
       </main>
     </div>
